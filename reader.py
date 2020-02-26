@@ -14,7 +14,7 @@ class XLSReader():
             self.header.append(h)
         print(f"header is :{self.header}")
     def __len__(self):
-        return 3
+        return self.nrows
 
     def __getitem__(self,index):
         if index >= self.__len__():
@@ -52,25 +52,35 @@ class XLSWriter():
     def save(self):
         self.workbook.save(self.name)
 
-keys=['1045209d4f9bc833843441ab0c467269']
+keys=['b96c9a530e17f21ebb195b335f3d1185','6f79cd6692a55591d95172847171f00c']
 
 if __name__=='__main__':
-    r=XLSReader('data.xlsx')
-    w=XLSWriter('data2.xls',r.header)
-    c=Caller(keys[0])
+    # with open('exception.txt','w') as f:
+    r=XLSReader('data3.xls')
+    w=XLSWriter('data4.xls',r.header)
+    c=Caller(keys)
+    cnt=0
     for i in r:
         city=i['city']
         locations=i['location'].split(';')
-        loc_out=[]
-        for l in locations:
-            loc=c.get_geo(city,l)
-            print(city,l,loc)
-            loc_out.append(loc)
-        print(loc_out)
         loc_str=''
-        for l in loc_out:
-            loc_str+=f'({l[0]},{l[1]}),'
-        i['location']=loc_str
-        w.insert(i)
-        print(i['index'])
-    w.save()
+        for l in locations:
+            if(l==''):
+                break
+            if(not l[1].isdigit()):
+                print(l[1:-1])
+                cnt+=1
+        #         try:
+        #             loc=c.get_geo(address=l[1:-1],city=city)
+        #         except Exception as e:
+        #             loc=f'{l};'
+        #         # f.write(f'{w.cur_row},{city},{l}'+'\n')
+        #     else :
+        #         loc=f'{l};'
+        #     # print(l,city,loc)
+        #     loc_str=loc_str+loc
+        # i['location']=loc_str
+        # w.insert(i)
+        # print(i['index'])
+    print(cnt)
+    # w.save()
