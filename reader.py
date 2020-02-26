@@ -54,22 +54,49 @@ class XLSWriter():
 
 keys=['b96c9a530e17f21ebb195b335f3d1185','6f79cd6692a55591d95172847171f00c']
 
+def delet_name(item):
+    name=''
+    user_name=item['user_name']
+    ind_start=user_name.find('某')
+    ind_end=ind_start
+    if ind_start==-1:
+        return item
+    print(user_name)
+    while(ind_start>0):
+        
+        ch = user_name[ind_start-1]
+        if ch=='，' or ch=='、' or ch=='：' or ch=='（' or ch=='）':
+            break
+        ind_start-=1
+    while(ind_end<len(user_name)):
+        ch = user_name[ind_end]
+        if ch=='，' or ch=='、' or ch=='：'or ch=='（' or ch=='）':
+            break
+        ind_end+=1
+    name=user_name[ind_start:ind_end]
+    print(name)
+    item['user_name']=user_name.replace(name,'')
+    item['track']=item['track'].replace(name,'')
+    return item
+
+
 if __name__=='__main__':
     # with open('exception.txt','w') as f:
     r=XLSReader('data3.xls')
     w=XLSWriter('data4.xls',r.header)
-    c=Caller(keys)
+    # c=Caller(keys)
     cnt=0
     for i in r:
-        city=i['city']
-        locations=i['location'].split(';')
-        loc_str=''
-        for l in locations:
-            if(l==''):
-                break
-            if(not l[1].isdigit()):
-                print(l[1:-1])
-                cnt+=1
+        item=delet_name(i)
+        # city=i['city']
+        # locations=i['location'].split(';')
+        # loc_str=''
+        # for l in locations:
+        #     if(l==''):
+        #         break
+        #     if(not l[1].isdigit()):
+        #         print(l[1:-1])
+        #         cnt+=1
         #         try:
         #             loc=c.get_geo(address=l[1:-1],city=city)
         #         except Exception as e:
@@ -80,7 +107,7 @@ if __name__=='__main__':
         #     # print(l,city,loc)
         #     loc_str=loc_str+loc
         # i['location']=loc_str
-        # w.insert(i)
-        # print(i['index'])
+        w.insert(i)
+        print(i['index'])
     print(cnt)
-    # w.save()
+    w.save()
